@@ -7,7 +7,7 @@ import pickle
 import warnings
 import numpy as np
 # import mediapipe as mp
-import face_reg
+import face_recognition
 from imutils import paths
 
 warnings.filterwarnings('ignore')
@@ -164,7 +164,8 @@ def encode_face(email="abc@gmail.com"):
     # Grab the paths to the input images in our dataset
     start = time.time()
     print("[INFO] Quantifying faces...")
-    dataset_path = os.path.join("datasets", email)
+    dataset_path = os.path.join("src\datasets", email)
+    print(dataset_path)
     image_paths = list(paths.list_images(dataset_path))
 
     # Initialize the list of known encodings and known names
@@ -183,7 +184,7 @@ def encode_face(email="abc@gmail.com"):
 
         # Detect the (x, y) coordinates of the bounding boxes corresponding to each face in the input image
         model = "cnn"
-        boxes = face_recognition.face_locations(img=rgb,  model=model)
+        boxes = face_recognition.face_locations(img=rgb, model=model)
 
         # Compute the facial embeddings for the face
         encodings = face_recognition.face_encodings(rgb, boxes)
@@ -197,7 +198,7 @@ def encode_face(email="abc@gmail.com"):
     # Dump the facial encodings + emails to disk
     print("[INFO] Serializing encodings...")
     data = {"encodings": known_encodings, "emails": known_emails}
-    
+
     encoding_file = os.path.join("src/encodings", f"{email}.pickle")
     print(encoding_file)
     with open(encoding_file, "wb") as f:
@@ -281,7 +282,7 @@ def export_to_json(email="Unknown", score=0):
 
 
 # Hàm nhận diện khuôn mặt qua ảnh
-def reg_image(img_path="", model_type="hog", encoding_file="encodings/tuananvo1309@gmail.com"):
+def reg_image(img_path="", encoding_file=""):
     """Nhận vào một tấm ảnh và xuất ra màn hình
 
     Args:
@@ -295,10 +296,13 @@ def reg_image(img_path="", model_type="hog", encoding_file="encodings/tuananvo13
     # Load the known faces and embeddings
     print("[INFO] Loading encodings...")
     try:
-        # encoding_file = "encodings/tuananvo1309@gmail.com"
+        print("SRC Pickle: " + encoding_file)
         data = pickle.loads(open(encoding_file, "rb").read())
+        print("data: "+data)
+
+
     except Exception as e:
-        print("Facial Embeddings file 'encodings.pickle' may not exist.")
+        print("Facial Embeddings file " + encoding_file + " may not exist.")
 
     # Load the input image and convert it from BGR (OpenCV ordering) to dlib ordering (RGB)
     image = cv2.imread(img_path)
@@ -340,7 +344,7 @@ def reg_image(img_path="", model_type="hog", encoding_file="encodings/tuananvo13
         emails.append(email)
 
         score = face_distance_to_conf(np.min(face_distances))
-        score = np.round(score*100, 1)
+        score = np.round(score * 100, 1)
         scores.append(score)
 
     # Loop over the recognized faces
@@ -366,11 +370,8 @@ def reg_image(img_path="", model_type="hog", encoding_file="encodings/tuananvo13
 
 
 if __name__ == "__main__":
-    # Tạo dataset
-    # generate_dataset(device=0, c=30, email="tuananvo1309@gmail.com")
-
     # Tạo file encodings
-    encode_face(email="a@gmail.com")
+    # encode_face(email="a@gmail.com")
 
     # Nhận diện khuôn mặt
-    # reg_image(img_path="images\\gray.jpg", encoding_file="encodings/tuananvo1309@gmail.com.pickle")
+    reg_image(img_path="src/05.jpg", encoding_file="src/encodings/a@gmail.com.pickle")
