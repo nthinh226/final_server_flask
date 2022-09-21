@@ -1,4 +1,6 @@
 import base64
+import os
+
 import cv2
 import json
 import numpy as np
@@ -6,6 +8,7 @@ import numpy as np
 from flask import Flask, jsonify, request
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_pymongo import PyMongo
+from face_reg import encode_face
 
 # Flask Server Backend
 app = Flask(__name__)
@@ -65,6 +68,8 @@ def signUp():
 def trainingFace():
     try:
         base64_string_array = json.loads(request.data)['file']
+        email = json.loads(request.data)['email']
+        print(email)
         img = []
         for i in range(len(base64_string_array)):
             image_string = base64.b64decode(base64_string_array[i])
@@ -74,8 +79,14 @@ def trainingFace():
             # print(jpg_as_np)
 
             img.append(cv2.imdecode(jpg_as_np, flags=0))
-            print(np.array(img[i]))
-            cv2.imwrite(f'color_img{i}.jpg', img[i])
+            # print(np.array(img[i]))
+            path = f'D:/IT/python/practice/final_server_flask/src/datasets/{email}'
+            try:
+                os.mkdir(path)
+            except OSError as error:
+                print(error)
+
+            cv2.imwrite(os.path.join(path, f'img{i}.jpg'), img[i])
 
             # im = cv2.resize(img, (28, 28), interpolation=cv2.INTER_AREA)
             # # print(im)
@@ -87,7 +98,7 @@ def trainingFace():
             # print(f'predict = {predict_x}, type: {type(predict_x)}')
             #
             # classes_x = np.argmax(predict_x, axis=1)
-
+        encode_face(email)
         res = jsonify({'message': 'Received'})
         res.status_code = 200
         return res

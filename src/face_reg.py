@@ -1,4 +1,6 @@
 import os
+import shutil
+
 import cv2
 import time
 import math
@@ -208,6 +210,8 @@ def encode_face(email="abc@gmail.com"):
 
     seconds = time.time() - start
     print('Time Taken:', time.strftime("%H:%M:%S", time.gmtime(seconds)))
+    shutil.rmtree(dataset_path);
+    print("Deleted folder " + dataset_path)
 
 
 def face_distance_to_conf(face_distance, face_match_threshold=0.6):
@@ -371,7 +375,7 @@ def reg_image(img_path="", encoding_file=""):
 
 if __name__ == "__main__":
     # Tạo file encodings
-    # encode_face(email="a@gmail.com")
+    # encode_face(email="b@gmail.com")
 
     # Nhận diện khuôn mặt
-    reg_image(img_path="src/05.jpg", encoding_file="src/encodings/a@gmail.com.pickle")
+    reg_image(img_path="src/1.jpg", encoding_file="src/encodings/phuong@gmail.com.pickle")
