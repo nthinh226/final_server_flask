@@ -98,13 +98,28 @@ def trainingFace():
             # print(f'predict = {predict_x}, type: {type(predict_x)}')
             #
             # classes_x = np.argmax(predict_x, axis=1)
-        encode_face(email)
+
         res = jsonify({'message': 'Received'})
         res.status_code = 200
         return res
+        encode_face(email)
     except Exception as error:
 
         res = jsonify({'message': 'Bad request', 'content': str(error)})
+        res.status_code = 400
+        return res
+
+
+@app.route("/api/v1/trainingServer", methods=['POST'])
+def trainingFaceServer():
+    try:
+        email = json.loads(request.data)['email']
+        encode_face(email)
+        res = jsonify({'message': 'Trainning Successfully'})
+        res.status_code = 200
+        return res
+    except Exception as error:
+        res = jsonify({'message': 'Training false!!', 'content': str(error)})
         res.status_code = 400
         return res
 
@@ -162,7 +177,7 @@ def signInByFace():
         cv2.imwrite(os.path.join(path, f'img_login.jpg'), img)
         score = reg_image(img_path=os.path.join(path, f'img_login.jpg'), encoding_file=f"src/encodings/{email}.pickle")
         print(score)
-        if ( score >= 90):
+        if (score >= 90):
             res = jsonify({'message': 'OK', 'score': score})
             res.status_code = 200
             return res
