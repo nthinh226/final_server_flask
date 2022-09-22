@@ -8,7 +8,7 @@ import numpy as np
 from flask import Flask, jsonify, request
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_pymongo import PyMongo
-from face_reg import encode_face
+from face_reg import encode_face, reg_image
 
 # Flask Server Backend
 app = Flask(__name__)
@@ -141,7 +141,41 @@ def signInByAccount():
 
 @app.route('/api/v1/loginByFace', methods=['POST'])
 def signInByFace():
-    pass
+    try:
+        _json = json.loads(request.data)
+        email = _json['email']
+        stringBase64 = _json['file']
+
+        image_string = base64.b64decode(stringBase64)
+        # print(image_string)
+
+        jpg_as_np = np.frombuffer(image_string, dtype=np.uint8)
+        # print(jpg_as_np)
+        img = cv2.imdecode(jpg_as_np, flags=0)
+
+        path = f'D:/IT/python/practice/final_server_flask/src/datasets/{email}'
+        try:
+            os.mkdir(path)
+        except OSError as error:
+            print(error)
+
+        cv2.imwrite(os.path.join(path, f'img_login.jpg'), img)
+        score = reg_image(img_path=os.path.join(path, f'img_login.jpg'), encoding_file=f"src/encodings/{email}.pickle")
+        print(score)
+        if ( score >= 90):
+            res = jsonify({'message': 'OK'})
+            res.status_code = 200
+            return res
+        else:
+            res = jsonify({'message': 'Not Ok'})
+            res.status_code = 400
+            return res
+
+    except Exception as error:
+        print(error)
+        res = jsonify({'message': 'Bad request', 'content': str(error)})
+        res.status_code = 400
+        return res
 
 
 # Start Backend

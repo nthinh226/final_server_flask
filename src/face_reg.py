@@ -210,8 +210,8 @@ def encode_face(email="abc@gmail.com"):
 
     seconds = time.time() - start
     print('Time Taken:', time.strftime("%H:%M:%S", time.gmtime(seconds)))
-    shutil.rmtree(dataset_path);
-    print("Deleted folder " + dataset_path)
+    # shutil.rmtree(dataset_path);
+    # print("Deleted folder " + dataset_path)
 
 
 def face_distance_to_conf(face_distance, face_match_threshold=0.6):
@@ -302,11 +302,9 @@ def reg_image(img_path="", encoding_file=""):
     try:
         print("SRC Pickle: " + encoding_file)
         data = pickle.loads(open(encoding_file, "rb").read())
-        print("data: "+data)
-
-
     except Exception as e:
-        print("Facial Embeddings file " + encoding_file + " may not exist.")
+        # print("Facial Embeddings file " + encoding_file + " may not exist.")
+        print("Error: " + e)
 
     # Load the input image and convert it from BGR (OpenCV ordering) to dlib ordering (RGB)
     image = cv2.imread(img_path)
@@ -372,10 +370,12 @@ def reg_image(img_path="", encoding_file=""):
     cv2.imshow("Image", resized)
     cv2.waitKey()
 
+    return score
+
 
 if __name__ == "__main__":
     # Tạo file encodings
-    # encode_face(email="b@gmail.com")
+    # encode_face(email="votuanan1309@gmail.com")
 
     # Nhận diện khuôn mặt
-    reg_image(img_path="src/1.jpg", encoding_file="src/encodings/phuong@gmail.com.pickle")
+    reg_image(img_path="src/4.jpg", encoding_file="src/encodings/b@gmail.com.pickle")
