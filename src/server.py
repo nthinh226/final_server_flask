@@ -163,7 +163,7 @@ def signInByFace():
         score = reg_image(img_path=os.path.join(path, f'img_login.jpg'), encoding_file=f"src/encodings/{email}.pickle")
         print(score)
         if ( score >= 90):
-            res = jsonify({'message': 'OK'})
+            res = jsonify({'message': 'OK', 'score': score})
             res.status_code = 200
             return res
         else:

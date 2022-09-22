@@ -361,14 +361,14 @@ def reg_image(img_path="", encoding_file=""):
         cv2.putText(image, f"{score}%", (left + 6, top - 20),
                     font, 0.7, (255, 255, 255), 1)
 
-    # Export result to json
-    export_to_json(email, score)
-
-    # Show the output image
-    print("[INFO] Finished...")
-    resized = resize_image_with_aspect_ratio(img=image, width=600)
-    cv2.imshow("Image", resized)
-    cv2.waitKey()
+    # # Export result to json
+    # export_to_json(email, score)
+    #
+    # # Show the output image
+    # print("[INFO] Finished...")
+    # resized = resize_image_with_aspect_ratio(img=image, width=600)
+    # cv2.imshow("Image", resized)
+    # cv2.waitKey()
 
     return score
 
